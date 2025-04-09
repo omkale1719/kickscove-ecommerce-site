@@ -113,7 +113,7 @@ app.post("/signup", async (req, res) => {
       if (err) return next(err);
 
       req.flash("success", "Signup successful! Welcome to our website.");
-      res.redirect("/showall");
+      res.redirect("/");
     });
   } catch (e) {
     // Handle specific errors, such as user already existing
@@ -147,7 +147,7 @@ app.post(
     failureFlash: "Invalid username or password.",
   }),
   async (req, res) => {
-    const redirectUrl = res.locals.redirectUrl || "/showall";
+    const redirectUrl = res.locals.redirectUrl || "/";
     delete res.locals.redirectUrl;
 
     req.flash("success", "Login successful! Welcome back.");
@@ -170,7 +170,7 @@ app.get("/logout", (req, res) => {
 
 
 // Show all listings
-app.get("/showall", async (req, res) => {
+app.get("/", async (req, res) => {
   console.log( req.curruser)
   const allListing = await Listing.find({});
   res.render("./listings/showall.ejs", { allListing });
@@ -414,11 +414,7 @@ app.get("/Empty_wishlis", (req, res) => {
 
 
 
-app.get("/men_d/:id", async (req, res) => {
-  const { id } = req.params;
-  const listing = await Men.findById(id);
-  res.render("./listings/men_d.ejs", { listing });
-});
+
 
 
 
