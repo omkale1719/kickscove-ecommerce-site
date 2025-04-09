@@ -76,7 +76,7 @@ passport.deserializeUser((id, done) => {
 async function main() {
   try {
     // await mongoose.connect("mongodb://127.0.0.1:27017/shoes_palace");
-    await mongoose.connect("AtlasDb_Url=mongodb+srv://omkale0107:KpQXxecPPRt7WAin@cluster0.9e6ps.mongodb.net/shoes_palace?retryWrites=true&w=majority")
+    await mongoose.connect("mongodb+srv://omkale0107:KpQXxecPPRt7WAin@cluster0.9e6ps.mongodb.net/shoes_palace?retryWrites=true&w=majority")
     console.log("Connection successful");
   } catch (err) {
     console.log("Connection error", err);
