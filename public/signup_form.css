@@ -1,0 +1,211 @@
+body{
+    justify-content: center;
+    text-align: center;
+    
+  }
+  .signup-form {
+    width: 90%;
+    max-width: 550px;
+    padding: 30px;
+    margin-top: 5rem;
+    margin-bottom: 15rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 1.2s ease-out;
+  }
+  
+  .main-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Optional: Adds spacing between the form and the image */
+    align-items: center; /* Vertically aligns items */
+    justify-content: center; /* Centers the items horizontally */
+  }
+  
+  .form-info {
+    flex: 1;
+    max-width: 50%;
+  }
+  
+  .form-img {
+    flex: 1;
+    max-width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .form-img img {
+    max-width: 100%;
+    max-width: 400px;
+    height: 70vh;
+    border-radius: 12px;
+    
+  }
+  
+  .signup-form h2 {
+    margin-bottom: 20px;
+    font-size: 26px;
+    color: #333;
+    text-align: center;
+    animation: slideIn 0.8s ease-out;
+  }
+  
+  .signup-form label {
+    font-size: 14px;
+    color: #555;
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .signup-form input[type="text"],
+  .signup-form input[type="email"],
+  .signup-form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .signup-form input:focus {
+    border-color: red;
+    outline: none;
+    box-shadow: 0 0 8px red;
+  }
+  
+  .signup-form button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, red,rgba(255, 0, 0, 0.647));
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  .signup-form button:hover {
+    background: linear-gradient(135deg, rgb(250, 3, 3),rgba(250, 138, 132, 0.647));
+    transform: scale(1.05);
+  }
+  
+  .signup-form a {
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #333;
+    transition: color 0.3s ease;
+  }
+  
+  .signup-form a:hover {
+    color: red;
+  }
+  
+  .signup-form .btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background: transparent;
+    border: 1px solid red;
+    color: red;
+    padding: 12px;
+    border-radius: 70px;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .signup-form .btn i {
+    margin-right: 8px;
+  }
+  
+  .signup-form .btn:hover {
+    background: linear-gradient(135deg, red,rgba(255, 0, 0, 0.647));
+    color: white;
+    border-color: transparent;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .signup-form {
+      width: 80%;
+      padding: 20px;
+      margin: 0;
+    }
+  
+    .signup-form h2 {
+      font-size: 22px;
+    }
+  
+    .signup-form button,
+    .signup-form .btn {
+      font-size: 14px;
+      padding: 10px;
+    }
+  
+    .signup-form input[type="text"],
+    .signup-form input[type="email"],
+    .signup-form input[type="password"] {
+      padding: 10px;
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .signup-form {
+      width: 95%;
+    }
+  
+    .signup-form h2 {
+      font-size: 20px;
+    }
+  
+    .signup-form label {
+      font-size: 12px;
+    }
+  
+    .signup-form button,
+    .signup-form .btn {
+      font-size: 12px;
+      padding: 8px;
+    }
+  
+    .signup-form input[type="text"],
+    .signup-form input[type="email"],
+    .signup-form input[type="password"] {
+      padding: 8px;
+      font-size: 12px;
+    }
+  }
+  

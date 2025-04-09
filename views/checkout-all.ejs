@@ -1,0 +1,82 @@
+<% layout('./layouts/boilerplate') %>
+<style>
+    .checkout-container {
+        padding: 30px;
+        background-color: #f8f9fa;
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+        padding: 15px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .product-img {
+        width: 80px;
+        border-radius: 6px;
+    }
+    .total-section {
+        text-align: right;
+        font-weight: bold;
+        margin-top: 20px;
+        font-size: 18px;
+    }
+    .btn-confirm {
+        background-color: #28a745;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: white;
+        display: block;
+        width: 200px;
+        margin: 30px auto;
+        text-align: center;
+        text-decoration: none;
+    }
+</style>
+
+<div class="checkout-container">
+    <h2>Ready to Checkout</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Size</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% cart.forEach(item => { %>
+                <tr>
+                    <td><img src="<%= item.img %>" alt="Product Image" class="product-img"></td>
+                    <td><%= item.title %></td>
+                    <td><%= item.size || '—' %></td>
+                    <td><%= item.quantity %></td>
+                    <td>&#8377;<%= item.price %></td>
+                    <td>&#8377;<%= (item.price * item.quantity).toLocaleString("en-IN") %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        Total Amount: &#8377;<%= cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toLocaleString("en-IN") %>
+    </div>
+
+    <a href="/confirm-order" class="btn-confirm">Confirm Order</a>
+</div>

@@ -364,6 +364,7 @@ body {
   
   #snackbar.warning {
     background-color: #ff9800;
+    
   }
   
 
@@ -476,6 +477,13 @@ body {
     box-shadow: none;
   }
 }
+
+
+
+.user-style{
+  border: 2px solid white;
+  border-radius: 50%;
+}
 /* badge */
 
 
@@ -501,6 +509,20 @@ body {
   display: flex; 
   align-items: center; 
   justify-content: center;
+}
+.cart-badge {
+  position: absolute; 
+  top: 5px; 
+  right: 20px; 
+  font-size: 0.75rem; 
+  padding: 0.2em 0.4em; 
+  color: white; 
+  background-color: rgb(253, 6, 6); 
+  border-radius: 50%; 
+  min-width: 20px;
+  height: 20px; 
+  display: flex; 
+  
 }
 
 

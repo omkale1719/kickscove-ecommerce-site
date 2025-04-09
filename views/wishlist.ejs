@@ -1,4 +1,3 @@
-
 <% layout('./layouts/boilerplate') %>
 <div class="container mt-5">
     <h2 class="text-center mb-4">Your Wishlist</h2>
@@ -8,7 +7,9 @@
             <% wishlist.forEach(function(item) { %>
                 <div class="col-lg-3 col-md-4 col-sm-6 d-flex justify-content-center">
                     <div class="card shadow-sm" style="width: 16rem;">
-                        <img src="<%= item.image.url %>" class="card-img-top" alt="<%= item.title %>" style="height: 200px; object-fit: cover;">
+                        <a href="/confirm-order">
+                            <img src="<%= item.image.url %>" class="card-img-top" alt="<%= item.title %>" style="height: 200px; object-fit: cover;">
+                        </a>
                         <div class="card-body">
                             <h5 class="card-title text-center"><%= item.title %></h5>
                             <p class="card-text text-center text-muted">&#8377;<%= item.price.toLocaleString("en-IN") %></p>
@@ -16,7 +17,7 @@
                             <div class="d-grid gap-2">
                                 <form action="/remove-from-wishlist" method="POST">
                                     <input type="hidden" name="productId" value="<%= item._id %>">
-                                    <button type="submit" class="btn btn-danger btn-block">Remove</button>
+                                    <button type="submit" class="btn btn-danger btn-block"><i class="fa-solid fa-trash"></i></button>
                                 </form>
                             </div>
                         </div>

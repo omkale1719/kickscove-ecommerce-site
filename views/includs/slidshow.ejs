@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Slideshow</title>
+    <style>
+        /* Container for the slideshow */
+        .slideshow-container {
+            position: relative;
+            max-width: 1700px; /* Set maximum width */
+           
+            margin: auto; /* Center the container */
+            overflow: hidden; /* Hide overflow */
+            border-radius: 10px; /* Add rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+        }
+
+        /* Individual slides */
+        .mySlides {
+            display: none; /* Hide slides by default */
+        }
+
+        /* Full-width images */
+        .mySlides img {
+            width: 100%; /* Make images responsive */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        /* Navigation buttons */
+        .prev, .next {
+            cursor: pointer; /* Change cursor on hover */
+            position: absolute; /* Positioning relative to the container */
+            top: 50%; /* Center vertically */
+            width: auto; /* Automatic width */
+            padding: 16px; /* Button padding */
+            color: white; /* Button text color */
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            border: none; /* No border */
+            border-radius: 3px; /* Rounded corners */
+            user-select: none; /* Prevent text selection */
+            transform: translateY(-50%); /* Adjust vertical alignment */
+            z-index: 10; /* Ensure buttons are above images */
+        }
+
+        .next {
+            right: 10px; /* Right alignment with some spacing */
+        }
+
+        .prev {
+            left: 10px; /* Left alignment with some spacing */
+        }
+
+        /* Dots for slide indicators */
+        .dot {
+            cursor: pointer; /* Change cursor on hover */
+            height: 15px; /* Dot height */
+            width: 15px; /* Dot width */
+            margin: 0 2px; /* Spacing between dots */
+            background-color: #bbb; /* Dot color */
+            border-radius: 50%; /* Make dots circular */
+            display: inline-block; /* Inline block for horizontal alignment */
+            transition: background-color 0.6s ease; /* Transition effect */
+        }
+
+        .active, .dot:hover {
+            background-color: #717171; /* Change color on active or hover */
+        }
+
+        /* Center the dots container */
+        .dots-container {
+            text-align: center; /* Center align dots */
+            margin-top: 10px; /* Spacing above dots */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Slideshow Container -->
+<div class="slideshow-container">
+
+    <!-- Slides -->
+    <div class="mySlides">
+        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8fDA%3D" alt="Slide 1">
+    </div>
+
+    <div class="mySlides">
+        <img src="https://images.pexels.com/photos/637076/pexels-photo-637076.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Slide 2">
+    </div>
+
+    <div class="mySlides">
+        <img src="https://images.pexels.com/photos/19090/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=800" alt="Slide 3">
+    </div>
+
+    <!-- Navigation buttons -->
+    <button class="prev" onclick="plusSlides(-1)">&#10094;</button>
+    <button class="next" onclick="plusSlides(1)">&#10095;</button>
+</div>
+
+<!-- Dots for indicators -->
+<div class="dots-container">
+    <span class="dot" onclick="currentSlide(1)"></span>
+    <span class="dot" onclick="currentSlide(2)"></span>
+    <span class="dot" onclick="currentSlide(3)"></span>
+</div>
+
+<script>
+    let slideIndex = 1;
+    showSlides(slideIndex);
+
+    // Next/previous controls
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    // Thumbnail image controls
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+        let i;
+        let slides = document.getElementsByClassName("mySlides");
+        let dots = document.getElementsByClassName("dot");
+        
+        // Loop back to the first slide if n exceeds the number of slides
+        if (n > slides.length) { slideIndex = 1 }
+        // Loop to the last slide if n is less than 1
+        if (n < 1) { slideIndex = slides.length }
+        
+        // Hide all slides
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        
+        // Remove "active" class from all dots
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        
+        // Show the current slide and set the active dot
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
+    }
+</script>
+
+</body>
+</html>

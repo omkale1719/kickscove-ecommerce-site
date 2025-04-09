@@ -29,44 +29,96 @@
                     <img src="<%= listing && listing.image ? listing.image.url : '/images/default-image.jpg' %>" alt="Color Image" class="img-fluid rounded-circle mr-2" style="width: 50px;">
                 </div>
 
-                <!-- Size Section -->
-                <h4>Select Size (UK)</h4>
-                <div class="btn-group d-flex flex-wrap" role="group">
-                    <button type="button" class="btn btn-outline-secondary m-1" data-size="6">6</button>
-                    <button type="button" class="btn btn-outline-secondary m-1" data-size="7">7</button>
-                    <button type="button" class="btn btn-outline-secondary m-1" data-size="8">8</button>
-                    <button type="button" class="btn btn-outline-secondary m-1" data-size="9">9</button>
-                    <button type="button" class="btn btn-outline-secondary m-1" data-size="10">10</button>
-                </div>
-                <input type="hidden" id="selectedSize" name="size" value="">
+                
+                <% if(curruser) {%>
 
-                <!-- Quantity Section -->
-                <p>Quantity</p>
-                <div class="input-group mb-3 w-100 w-md-50">
-                    <button class="btn btn-outline-secondary" type="button" onclick="decreaseValue()">-</button>
-                    <input type="number" id="quantity" class="form-control text-center" value="1" min="1" max="10">
-                    <button class="btn btn-outline-secondary" type="button" onclick="increaseValue()">+</button>
-                </div>
-
-                <!-- Delivery Check Section -->
-                <p>Check delivery at your location &nbsp;<i class="fas fa-truck"></i></p>
-                <div class="d-flex flex-wrap">
-                    <input placeholder="Enter Your Pincode" type="number" name="pincode" class="form-control w-100 w-md-50">
-                    <button class="btn btn-primary ml-2 mt-2 mt-md-0" type="button" onclick="checkDelivery()">CHECK</button>
-                </div>
-
-                <!-- Add to Cart and Buy Now Buttons -->
-                <div class="container mt-4">
-                    <form>
-                        <input type="hidden" id="product-id" value="<%= listing._id %>">
-                        <input type="hidden" id="model" value="Women">
-
-                        <div class="d-flex flex-wrap">
-                            <button type="button" class="btn btn-warning mr-2 mb-2" onclick="addToCart()">Add to Cart</button>
-                            <button type="button" class="btn btn-success mb-2" onclick="buyNow()">Buy Now</button>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Size Section -->
+                    <h4>Select Size (UK)</h4>
+                    <div class="btn-group d-flex flex-wrap" role="group">
+                        <button type="button" class="btn btn-outline-secondary m-1" data-size="6">6</button>
+                        <button type="button" class="btn btn-outline-secondary m-1" data-size="7">7</button>
+                        <button type="button" class="btn btn-outline-secondary m-1" data-size="8">8</button>
+                        <button type="button" class="btn btn-outline-secondary m-1" data-size="9">9</button>
+                        <button type="button" class="btn btn-outline-secondary m-1" data-size="10">10</button>
+                    </div>
+                    <input type="hidden" id="selectedSize" name="size" value="">
+    
+                    <!-- Quantity Section -->
+                    <p>Quantity</p>
+                    <div class="input-group mb-3 w-100 w-md-50">
+                        <button class="btn btn-outline-secondary" type="button" onclick="decreaseValue()">-</button>
+                        <input type="number" id="quantity" class="form-control text-center" value="1" min="1" max="10">
+                        <button class="btn btn-outline-secondary" type="button" onclick="increaseValue()">+</button>
+                    </div>
+    
+                    <!-- Delivery Check Section -->
+                    <p>Check delivery at your location &nbsp;<i class="fas fa-truck"></i></p>
+                    <div class="d-flex flex-wrap">
+                        <input placeholder="Enter Your Pincode" type="number" name="pincode" class="form-control w-100 w-md-50">
+                        <button class="btn btn-primary ml-2 mt-2 mt-md-0" type="button" onclick="checkDelivery()">CHECK</button>
+                    </div>
+    
+                    <!-- Add to Cart and Buy Now Buttons -->
+                    <div class="container mt-4">
+                        <form>
+                            <input type="hidden" id="product-id" value="<%= listing._id %>">
+                            <input type="hidden" id="model" value="Collections">
+    
+                            <div class="d-flex flex-wrap">
+                                <button type="button" class="btn btn-warning mr-2 mb-2" onclick="addToCart()">Add to Cart</button>
+                                <button type="button" class="btn btn-success mb-2" onclick="buyNow()">Buy Now</button>
+                            </div>
+                        </form>
+                    </div>
+                    <% }else { %>
+    
+    
+                        <a href="/login">
+                        <!-- Size Section -->
+                    <h4>Select Size (UK)</h4>
+                    <div class="btn-group d-flex flex-wrap" role="group">
+                    
+                        <button type="button" class="btn btn-outline-secondary m-1" data-size="6">6</button>
+                        <button type="button" class="btn btn-outline-secondary m-1" data-size="7">7</button>
+                        <button type="button" class="btn btn-outline-secondary m-1" data-size="8">8</button>
+                        <button type="button" class="btn btn-outline-secondary m-1" data-size="9">9</button>
+                        <button type="button" class="btn btn-outline-secondary m-1" data-size="10">10</button>
+                    </div>
+                    <input type="hidden" id="selectedSize" name="size" value="">
+    
+                    <!-- Quantity Section -->
+                    <p>Quantity</p>
+                    <div class="input-group mb-3 w-100 w-md-50">
+                        <button class="btn btn-outline-secondary" type="button" onclick="decreaseValue()">-</button>
+                        <input type="number" id="quantity" class="form-control text-center" value="1" min="1" max="10">
+                        <button class="btn btn-outline-secondary" type="button" onclick="increaseValue()">+</button>
+                    </div>
+    
+                    <!-- Delivery Check Section -->
+                    <p>Check delivery at your location &nbsp;<i class="fas fa-truck"></i></p>
+                    <div class="d-flex flex-wrap">
+                        <input placeholder="Enter Your Pincode" type="number" name="pincode" class="form-control w-100 w-md-50">
+                        <button class="btn btn-primary ml-2 mt-2 mt-md-0" type="button" onclick="checkDelivery()">CHECK</button>
+                    </div>
+    
+                    <!-- Add to Cart and Buy Now Buttons -->
+                    <div class="container mt-4">
+                        <form>
+                            <input type="hidden" id="product-id" value="<%= listing._id %>">
+                            <input type="hidden" id="model" value="Collections">
+    
+                            <div class="d-flex flex-wrap">
+                                <button type="button" class="btn btn-warning mr-2 mb-2" onclick="addToCart()">Add to Cart</button>
+                                <button type="button" class="btn btn-success mb-2" onclick="buyNow()">Buy Now</button>
+                            </div>
+                        </form>
+                    </div>
+                </a>
+    
+    
+                        <% } %>
+    
+    
 
                 <!-- Product Description -->
                 <p><%= listing && listing.description ? listing.description : 'No description available' %></p>

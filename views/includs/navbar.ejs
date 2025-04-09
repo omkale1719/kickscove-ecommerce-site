@@ -43,23 +43,31 @@
 
         <!-- Account and Wishlist Links -->
         <ul class="navbar-nav ms-auto d-flex justify-content-end mt-2 mt-lg-0">
+          <% if(!curruser) {%>
           <li class="nav-item">
-            <a class="nav-link" href="#" style="font-size: 18px;">Account</a>
+            <a class="nav-link user-style" href="/login" style="font-size: 18px;"><i class="fa-solid fa-user"></i></a>
           </li>
+          <% }if(curruser) {%>
           <li class="nav-item">
             <a class="nav-link position-relative" href="/wishlist">
               <i class="fa-regular fa-heart">
-                <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill">1</span>
+                <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill">0</span>
               </i>
               Wishlist
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart cart-icon" id="cart-icon"></i> Cart</a>
+            <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart cart-icon" id="cart-icon">
+              <span id="cart-count" class="translate-middle cart-badge rounded-pill">0</span>
+            </i> Cart</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/track_orders"><i class="fas fa-truck"></i> Track Order</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout" style="font-size: 18px;">LogOut</a>
+          </li>
+          <% } %>
         </ul>
       </div>
     </div>

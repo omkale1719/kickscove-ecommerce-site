@@ -1,0 +1,34 @@
+
+<title>Signup Form</title>
+<% layout('./layouts/boilerplate') %>
+<link rel="stylesheet" href="signup_form.css">
+
+</head>
+<body>
+<div  style="justify-content: center; display:flex">
+<form class="signup-form" action="/signup" method="POST">
+  <div class="main-container">
+    <div class="form-img">
+      <img src="https://res.cloudinary.com/dsbxrs90o/image/upload/v1735932033/istockphoto-1356874652-612x612-removebg-preview_jpgtaq.png" style="max-width: 300px;" alt="form img">
+    </div>
+    <div class="form-info">
+  <h2>Signup</h2>
+  <label for="name"><B>Username</B></label>
+  <input type="text" id="username" name="username" required>
+
+  <label for="email"><B>Email</B></label>
+  <input type="email" id="email" name="email" required>
+
+  <label for="password"><B>Password</B></label>
+  <input type="password" id="password" name="password" required>
+
+  <button type="submit">Sign Up</button>
+</div>
+
+</div>
+</form>
+</div>
+
+
+</body>
+</html>

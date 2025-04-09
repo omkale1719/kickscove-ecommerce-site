@@ -1,0 +1,57 @@
+<link href="flash.css" rel="stylesheet">
+<body>
+    <div class="flash-container" id="flashContainerSuccess">
+        <div class="flash-message success hidden" id="flashMessageSuccess">
+            <span id="successMessage"></span>
+            <button class="close-button" onclick="closeFlashMessage('flashMessageSuccess')">×</button>
+        </div>
+    </div>
+
+    <div class="flash-container" id="flashContainerError">
+        <div class="flash-message error hidden" id="flashMessageError">
+            <span id="errorMessage"></span>
+            <button class="close-button" onclick="closeFlashMessage('flashMessageError')">×</button>
+        </div>
+    </div>
+
+    <script>
+        const success = "<%= success || '' %>";
+        const error = "<%= error || '' %>";
+
+        function showFlashMessage(id, message) {
+            const flashMessage = document.getElementById(id);
+            const flashContainer = flashMessage.parentElement;
+
+            const messageElementId = id === 'flashMessageSuccess' ? 'successMessage' : 'errorMessage';
+            document.getElementById(messageElementId).innerText = message;
+
+            flashContainer.classList.add('visible');
+            flashMessage.classList.remove('hidden');
+            flashMessage.style.animation = 'slideUp 0.6s ease-out forwards';
+
+            setTimeout(() => {
+                closeFlashMessage(id);
+            }, 5000);
+        }
+
+        function closeFlashMessage(id) {
+            const flashMessage = document.getElementById(id);
+            const flashContainer = flashMessage.parentElement;
+
+            flashMessage.style.animation = 'slideOut 0.6s ease-in forwards';
+
+            setTimeout(() => {
+                flashMessage.classList.add('hidden');
+                flashContainer.classList.remove('visible');
+            }, 600);
+        }
+
+        if (success) {
+            showFlashMessage('flashMessageSuccess', success);
+        }
+
+        if (error) {
+            showFlashMessage('flashMessageError', error);
+        }
+    </script>
+</body>

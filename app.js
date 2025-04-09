@@ -13,6 +13,12 @@ const path = require("path");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const Wishlist = require("./model/wishlist.js");
+const passport = require("passport");
+const localstrategy = require("passport-local");
+const user = require("./model/user.js");
+const { saveRedirectUrl } = require("./middleware.js");
+const flash = require("express-flash");
+
 
 // Setting up EJS as the view engine and configuring view file paths
 app.set("view engine", "ejs");
@@ -23,16 +29,48 @@ app.engine("ejs", ejsMate);
 // Parsing incoming JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(flash());
 
 // Session management setup to handle user sessions, cookies, etc.
-app.use(
-  session({
-    secret: "your_secret_key", // Should be stored securely in production
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  })
-);
+app.use(session({
+  secret: "your_secret_key",  
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }  
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Global Variables Middleware
+app.use((req, res, next) => {
+  console.log("Current User:", req.user);  
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.curruser = req.user || null;
+  next();
+});
+
+
+
+passport.use(new localstrategy(user.authenticate()));
+
+passport.serializeUser(user.serializeUser());
+passport.deserializeUser(user.deserializeUser());
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  user.findById(id, (err, user) => {
+    if (err) return done(err);
+    console.log("Deserialized User:", user);  
+    done(null, user);
+  });
+});
+
+
 
 // Connect to MongoDB database
 async function main() {
@@ -47,8 +85,93 @@ main();
 
 // Routes to render different product listings and detail pages
 
+
+
+
+// Signup Route
+app.get("/signup", async (req, res) => {
+  res.render("User/signup_form.ejs", {
+  });
+});
+
+
+
+
+// User Signup Route
+app.post("/signup", async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    // Create a new user object
+    const newUser = new user({ email, username });
+
+    // Register the new user with a password
+    const registeredUser = await user.register(newUser, password);
+    console.log(registeredUser);
+
+    req.login(registeredUser, (err) => {
+      if (err) return next(err);
+
+      req.flash("success", "Signup successful! Welcome to our website.");
+      res.redirect("/showall");
+    });
+  } catch (e) {
+    // Handle specific errors, such as user already existing
+    if (e.name === "UserExistsError") {
+      req.flash(
+        "error",
+        "User already exists. Please try a different username."
+      );
+      console.log("Error IS occured")
+    } else {
+      req.flash("error", "Something went wrong. Please try again.");
+      console.log("Error Found")
+    }
+
+    res.redirect("/signup");
+  }
+});
+
+// Login Routes
+app.get("/login", async (req, res) => {
+  res.render("User/login_form.ejs", {
+    
+  });
+});
+
+app.post(
+  "/login",
+  saveRedirectUrl,
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureFlash: "Invalid username or password.",
+  }),
+  async (req, res) => {
+    const redirectUrl = res.locals.redirectUrl || "/showall";
+    delete res.locals.redirectUrl;
+
+    req.flash("success", "Login successful! Welcome back.");
+    res.redirect(redirectUrl);
+  }
+);
+
+// Logout Route
+app.get("/logout", (req, res) => {
+  req.logout((err) => {
+    req.session.destroy(() => res.redirect("/showall"));
+  });
+});
+
+
+
+
+
+
+
+
 // Show all listings
 app.get("/showall", async (req, res) => {
+  console.log( req.curruser)
   const allListing = await Listing.find({});
   res.render("./listings/showall.ejs", { allListing });
 });
@@ -139,8 +262,10 @@ async function getProductById(productModel, productId) {
 
 // Add product to cart
 app.post("/add-to-cart", async (req, res) => {
-  const { productId, quantity, model } = req.body;
+  const { productId, quantity, model, img, size } = req.body;
+  
   try {
+    // console.log("image: ",img,"size:",size);
     const product = await getProductById(model, productId);
     if (!product) {
       return res.json({ success: false, message: "Product not found" });
@@ -152,14 +277,47 @@ app.post("/add-to-cart", async (req, res) => {
       productId: product._id,
       title: product.title,
       price: product.price,
+      img: img,
       quantity: quantity,
     });
+    req.session.cartCount=req.session.cart.length;
+    console.log("cart count ", req.session.cartCount);
     console.log("Cart:", req.session.cart);
     return res.json({ success: true, message: "Added to cart" });
   } catch (error) {
     console.error("Error adding to cart:", error);
     return res.json({ success: false, message: "Error adding to cart" });
   }
+});
+
+
+
+app.post("/delete-from-cart", (req, res) => {
+  const { productId } = req.body;
+
+  if (!req.session.cart) {
+    return res.json({ success: false, message: "Cart is empty" });
+  }
+
+  // Filter out the item to be deleted
+  req.session.cart = req.session.cart.filter(item => item.productId != productId);
+
+  // Update cart count
+  req.session.cartCount = req.session.cart.length;
+
+  
+    res.redirect("/cart");
+    req.flash("success", "Item Was Deleted!");
+});
+
+
+app.get("/checkoutAll", (req, res) => {
+  const cart = req.session.cart || []; // assuming cart is in session
+  res.render('checkout-all', { cart });
+});
+app.get("/confirm-order", (req, res) => {
+  const cart = req.session.cart || []; // assuming cart is in session
+  res.render("buy_now.ejs");
 });
 
 // Render the cart page
@@ -213,6 +371,8 @@ app.post("/add-to-wishlist", async (req, res) => {
       req.session.wishlist = [];
     }
     req.session.wishlist.push(product._id);
+    req.session.wishlistCount=req.session.wishlist.length ;
+    // console.log("wishlist count",req.session.wishlistCount);
     res.redirect(req.get("referer"));
   } catch (err) {
     console.error("Error adding to wishlist:", err);
@@ -252,6 +412,21 @@ app.get("/Empty_wishlis", (req, res) => {
   res.render("Empty_wishlist.ejs");
 });
 
+
+
+app.get("/men_d/:id", async (req, res) => {
+  const { id } = req.params;
+  const listing = await Men.findById(id);
+  res.render("./listings/men_d.ejs", { listing });
+});
+
+
+
+
+
+
+
+
 // Remove a product from wishlist
 app.post("/remove-from-wishlist", async (req, res) => {
   const { productId } = req.body;
@@ -260,6 +435,8 @@ app.post("/remove-from-wishlist", async (req, res) => {
       return res.redirect("/wishlist");
     }
     req.session.wishlist = req.session.wishlist.filter((id) => id !== productId);
+    req.session.wishlistCount=req.session.wishlist.length ;
+    // console.log("Remove wishlist count",req.session.wishlistCount);
     res.redirect("/wishlist");
   } catch (error) {
     console.error("Error removing from wishlist:", error);
@@ -280,6 +457,18 @@ app.get("/track_orders", (req, res) => {
 app.get("/Contact_Us", (req, res) => {
   res.render("./footer_links/contact.ejs");
 });
+
+
+app.get("/added_in_wishlist",(req,res)=>{
+  const wishlistCount=req.session.wishlistCount || 0;
+ res.json({wishlistCount});
+})
+
+app.get("/added_to_cart",(req,res)=>{
+  const cartCount=req.session.cartCount || 0;
+  res.json({cartCount});
+})
+
 
 // Start server on port 3000
 app.listen(3000, () => {

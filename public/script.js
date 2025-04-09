@@ -50,6 +50,8 @@ function addToCart() {
     const productId = document.getElementById('product-id').value;
     const model = document.getElementById('model').value;
     const selectedSize = selectedSizeButton.getAttribute('data-size');
+    const img = document.querySelector('.col-md-6.img-det.text-center img').src;
+
 
     fetch('/add-to-cart', {
         method: 'POST',
@@ -61,10 +63,12 @@ function addToCart() {
             quantity: quantity, 
             size: selectedSize,  
             pincode: pincode,  
-            model: model 
+            model: model,
+            img :img
         })
     })
     .then(response => response.json())
+    
     .then(data => {
         if (data.success) {
             showSnackbar('Added ' + quantity + ' item(s) to the cart', 'success');
@@ -175,5 +179,92 @@ document.addEventListener('DOMContentLoaded', function() {
       menu.classList.remove('show'); 
     }
   });
+
+
+
+
+// Select all heart buttons and icons
+const heartButtons = document.querySelectorAll('.heartBtn');
+        
+heartButtons.forEach((heartBtn) => {
+  heartBtn.addEventListener('click', function(event) {
+  //  alert("product added in wishlist");
+//   showSnackbar("ghdx jhexjkrxcnhcbx", 'success');
+
+    const heartIcon = this.querySelector('.heartIcon'); // Get the icon inside the clicked button
+
+    // Toggle between regular (outline) and solid heart
+    if (heartIcon.classList.contains('fa-regular')) {
+      heartIcon.classList.remove('fa-regular');
+      heartIcon.classList.add('fa-solid');
+    } else {
+      heartIcon.classList.remove('fa-solid');
+      heartIcon.classList.add('fa-regular');
+    }
+  });
+});
+
+
+
+
+
+
+
+
+ async  function updateWishlistCount(){
+    try{
+const response= await fetch("/added_in_wishlist");
+   const data= await response.json();
+   const wishlistCount=data.wishlistCount;
+
+   const wishlistBadge=document.getElementById("wishlist-count");
+
+   if(wishlistCount>0){
+    wishlistBadge.textContent=wishlistCount;
+    wishlistBadge.style.display="inline-block";
+   }
+   else{
+    wishlistBadge.style.display="none";
+   }
+    }
+
+    catch(error){
+        console.error(error);
+
+    }
+   
+
+  }
+
+document.addEventListener("DOMContentLoaded",updateWishlistCount);
+
+
+async function updateCartCount(){
+    try{
+    const response=await fetch("/added_to_cart");
+    const data=await response.json();
+    const cartCount=data.cartCount;
+
+    const cartBadge=document.getElementById("cart-count");
+    
+if(cartCount>0){
+    cartBadge.textContent=cartCount;
+    cartBadge.style.display="inline-block";
+}
+else{
+    cartBadge.style.display="none";
+}
+    }
+    catch(error){
+        console.error(error);
+    }
+
+}
+
+document.addEventListener("DOMContentLoaded",updateCartCount);
+
+
+
+
 
 

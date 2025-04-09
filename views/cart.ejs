@@ -24,7 +24,7 @@
 
     h2 {
         font-size: 24px;
-        color: #dc3545; 
+        color: #dc3545;
     }
 
     p {
@@ -33,39 +33,34 @@
         color: #666;
     }
 
-    .btn1 {
+    .btn1, .btn2 {
         display: inline-block;
         padding: 10px 20px;
         margin-top: 20px;
         border: none;
         border-radius: 5px;
         text-decoration: none;
-        background-color: #690ee8;
         color: white;
         transition: background-color 0.3s;
     }
 
-    .btn2 {
-        display: inline-block;
-        width: 50%;
-        padding: 10px 20px;
-        text-align: center;
-        margin-top: 20px;
-        margin-left: 25%;
-        margin-bottom: 2rem;
-        border: none;
-        border-radius: 5px;
-        text-decoration: none;
-        background-color: #0d4224; 
-        color: white;
-        transition: background-color 0.3s;
+    .btn1 {
+        background-color: #690ee8;
     }
 
     .btn1:hover {
-        background-color: #0056b3; 
+        background-color: #0056b3;
     }
+
+    .btn2 {
+        width: 50%;
+        margin-left: 25%;
+        margin-bottom: 2rem;
+        background-color: #0d4224;
+    }
+
     .btn2:hover {
-        background-color: #1d6722; 
+        background-color: #1d6722;
     }
 
     .empty-image {
@@ -73,15 +68,23 @@
         margin-top: 20px;
     }
 
+    .cart-container {
+        padding: 20px;
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     th, td {
         padding: 15px;
-        text-align: left;
+        text-align: center;
         border-bottom: 1px solid #ddd;
     }
 
@@ -89,19 +92,21 @@
         background-color: #f2f2f2;
     }
 
-    .delete-btn {
-        background-color: #dc3545;
-        color: white;
-        padding: 5px 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
+    .cart-img {
+        width: 80px;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        object-fit: cover;
     }
 
-    .delete-btn:hover {
-        background-color: #c82333;
+   
+    .total-amount {
+        text-align: right;
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
     }
-
 </style>
 
 <body>
@@ -112,37 +117,50 @@
                     <h2>The Cart is Empty</h2>
                     <p>Your Cart is currently empty. Add items you love to it!</p>
                     <a href="/showall" class="btn1 btn-primary">Browse Products</a>
-                    <img src="/assets/images/Ecart.jpeg" alt="Empty Wishlist" class="empty-image"> 
+                    <img src="/assets/images/Ecart.jpeg" alt="Empty Wishlist" class="empty-image">
                 </div>
             </div>
         <% } else { %>
             <table>
                 <thead>
                     <tr>
+                        <th></th>
+                        <th>Image</th>
                         <th>Product</th>
-                       
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Total</th>
-                       
+                        <th>.</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% cart.forEach(item => { %>
                         <tr>
-                            <td> <%= item.title %> </td>
+                          
+                            <td></td>
+                            <td><img src="<%= item.img %>" alt="Product Image" class="cart-img"></td>
+                            <td><%= item.title %></td>
                             <td>&#8377;<%= item.price.toLocaleString("en-IN") %></td>
                             <td><%= item.quantity %></td>
                             <td>&#8377;<%= (item.price * item.quantity).toLocaleString("en-IN") %></td>
-            
+                            <td> <form action="/delete-from-cart" method="POST">
+                                <input type="hidden" name="productId" value="<%= item.productId %>">
+                                <button type="submit" class="delete-btn">Remove</button>
+                              </form></td>
                         </tr>
+                        
                     <% }); %>
                 </tbody>
             </table>
-            <div>
-                <strong>Total Amount: &#8377;<%= cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toLocaleString("en-IN") %></strong>
+            <div class="btn-group">
+                <a href="/checkoutAll" class="btn3 btn-danger">Checkout All</a>
+            </div>
+
+            <div class="total-amount">
+                Total Amount: &#8377;<%= cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toLocaleString("en-IN") %>
             </div>
         <% } %>
+
         <a href="/showall" class="btn2 btn-primary">Continue Shopping</a>
     </div>
 </body>

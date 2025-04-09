@@ -1,0 +1,32 @@
+
+<title>Login</title>
+<% layout('./layouts/boilerplate') %>
+<link rel="stylesheet" href="signup_form.css">
+</head>
+<body>
+<div  style="justify-content: center; display:flex">
+<form class="signup-form" action="/login" method="POST">
+  <div class="main-container">
+     <div class="form-info">
+  <h2>Login</h2>
+  <label for="username">Username</label>
+  <input type="text" id="username" name="username" required>
+
+  <label for="password">Password</label>
+  <input type="password" id="password" name="password" required>
+
+  <button type="submit">Login</button>
+  <a href="/signup" class="btn">
+    <i class="fa-solid fa-user-plus"></i> Sign Up
+  </a>
+  </div>
+  <div class="form-img">
+    <img src="https://res.cloudinary.com/dsbxrs90o/image/upload/v1735930664/login2-removebg-preview_fjbrdc.png" alt="form img">
+  </div>
+
+  </div>
+   </form>
+   </div>
+
+</body>
+</html>

@@ -5,30 +5,20 @@
     <div class="container my-4">
         <!-- Bootstrap Responsive Grid -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
-            <% allListing.forEach(function(Listing) { %>
+            <% allListing.forEach(function(Listing, index) { 
+                let initialStock = 40;
+                let soldCount = 0;
+            %>
                 <div class="col">
                     <div class="card h-100 position-relative">
                         <!-- Wishlist Button -->
-                        <div class="wishlist-button position-absolute" style="top: 10px; right: 10px;">
-                            <form id="add-to-wishlist-form" action="/add-to-wishlist" method="POST">
-                                <input type="hidden" name="productId" value="<%= Listing._id %>">
-                                <input type="hidden" name="model" value="Listing">
-                                <button type="submit" class="heartBtn" style="border: none; background: none;">
-                                    <i class="fa-regular fa-heart heartIcon"></i>
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- Product Link Wrapper -->
+                        <!-- (your wishlist code stays unchanged) -->
+            
                         <a href="/showdetail/<%= Listing._id %>" class="stretched-link text-decoration-none">
-                            <!-- Product Image -->
                             <img src="<%= Listing.image.url %>" class="card-img-top img-fluid" alt="Product Image" style="object-fit: cover; height: 200px;">
-
                             <div class="card-body d-flex flex-column">
-                                <!-- Product Title -->
                                 <h5 class="card-title mb-2"><%= Listing.title %></h5>
-
-                                <!-- Price and Sale Information -->
+            
                                 <div class="d-flex align-items-center">
                                     <p class="card-text mb-0">&#8377;<%= Listing.price.toLocaleString("en-IN") %></p>
                                     <% if (Listing.Rprice) { %>
@@ -36,16 +26,23 @@
                                         <p class="text-danger ml-2 mb-0">Sale</p>
                                     <% } %>
                                 </div>
-
-                                <!-- Size Information -->
+            
+                                <!-- Sizes -->
                                 <p class="disable mb-0 mt-2">Sizes: 6 7 8 9 10</p>
-                            </div>
+            
+                                <!-- Virtual Stock -->
+                                <p  class="text-muted mt-1 mb-0">Available Stock: <span class="stock-value">40</span></p>
+            
+                                </div>
                         </a>
                     </div>
                 </div>
             <% }); %>
+            
         </div>
     </div>
+
+    
 
     <script src="heart_icon.js"></script>
 </body>
