@@ -4,13 +4,17 @@
         font-family: Arial, sans-serif;
         background-color: #f8f9fa;
         color: #333;
+        margin: 0;
+        padding: 0;
     }
 
-    .container1 {
+    .container1, .cart-container {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        flex-direction: column;
+        padding: 20px;
+        min-height: 100vh;
         text-align: center;
     }
 
@@ -19,7 +23,8 @@
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        max-width: 400px;
+        max-width: 90%;
+        width: 400px;
     }
 
     h2 {
@@ -33,7 +38,7 @@
         color: #666;
     }
 
-    .btn1, .btn2 {
+    .btn1, .btn2, .btn3, .delete-btn {
         display: inline-block;
         padding: 10px 20px;
         margin-top: 20px;
@@ -41,21 +46,18 @@
         border-radius: 5px;
         text-decoration: none;
         color: white;
-        transition: background-color 0.3s;
-    }
-
-    .btn1 {
         background-color: #690ee8;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
     }
 
-    .btn1:hover {
+    .btn1:hover, .btn3:hover {
         background-color: #0056b3;
     }
 
     .btn2 {
         width: 50%;
-        margin-left: 25%;
-        margin-bottom: 2rem;
+        margin: 2rem auto;
         background-color: #0d4224;
     }
 
@@ -63,13 +65,24 @@
         background-color: #1d6722;
     }
 
+    .btn3 {
+        margin: 20px 0;
+        background-color: #dc3545;
+    }
+
+    .delete-btn {
+        background-color: #ff4444;
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .delete-btn:hover {
+        background-color: #c82333;
+    }
+
     .empty-image {
         width: 150px;
         margin-top: 20px;
-    }
-
-    .cart-container {
-        padding: 20px;
     }
 
     table {
@@ -83,9 +96,10 @@
     }
 
     th, td {
-        padding: 15px;
+        padding: 12px;
         text-align: center;
         border-bottom: 1px solid #ddd;
+        font-size: 14px;
     }
 
     th {
@@ -93,19 +107,59 @@
     }
 
     .cart-img {
-        width: 80px;
+        width: 60px;
         height: auto;
         border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         object-fit: cover;
     }
 
-   
     .total-amount {
         text-align: right;
-        margin-top: 20px;
+        margin: 20px 0;
         font-size: 18px;
         font-weight: bold;
+        width: 100%;
+        padding-right: 10px;
+    }
+
+    /* Responsive Styling */
+    @media (max-width: 768px) {
+        table, thead, tbody, th, td, tr {
+            display: block;
+            width: 100%;
+        }
+
+        thead {
+            display: none;
+        }
+
+        tr {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        td {
+            text-align: left;
+            padding: 8px 10px;
+            position: relative;
+        }
+
+        td::before {
+            content: attr(data-label);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+            color: #555;
+        }
+
+        .total-amount {
+            text-align: center;
+            padding: 10px 0;
+        }
     }
 </style>
 
@@ -116,7 +170,7 @@
                 <div class="empty-wishlist">
                     <h2>The Cart is Empty</h2>
                     <p>Your Cart is currently empty. Add items you love to it!</p>
-                    <a href="/showall" class="btn1 btn-primary">Browse Products</a>
+                    <a href="/showall" class="btn1">Browse Products</a>
                     <img src="/assets/images/Ecart.jpeg" alt="Empty Wishlist" class="empty-image">
                 </div>
             </div>
@@ -130,30 +184,33 @@
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Total</th>
-                        <th>.</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% cart.forEach(item => { %>
                         <tr>
-                          
-                            <td></td>
-                            <td><img src="<%= item.img %>" alt="Product Image" class="cart-img"></td>
-                            <td><%= item.title %></td>
-                            <td>&#8377;<%= item.price.toLocaleString("en-IN") %></td>
-                            <td><%= item.quantity %></td>
-                            <td>&#8377;<%= (item.price * item.quantity).toLocaleString("en-IN") %></td>
-                            <td> <form action="/delete-from-cart" method="POST">
-                                <input type="hidden" name="productId" value="<%= item.productId %>">
-                                <button type="submit" class="delete-btn">Remove</button>
-                              </form></td>
+                            <td data-label=""></td>
+                            <td data-label="Image">
+                                <img src="<%= item.img %>" alt="Product Image" class="cart-img">
+                            </td>
+                            <td data-label="Product"><%= item.title %></td>
+                            <td data-label="Price">&#8377;<%= item.price.toLocaleString("en-IN") %></td>
+                            <td data-label="Quantity"><%= item.quantity %></td>
+                            <td data-label="Total">&#8377;<%= (item.price * item.quantity).toLocaleString("en-IN") %></td>
+                            <td data-label="Remove">
+                                <form action="/delete-from-cart" method="POST">
+                                    <input type="hidden" name="productId" value="<%= item.productId %>">
+                                    <button type="submit" class="delete-btn">Remove</button>
+                                </form>
+                            </td>
                         </tr>
-                        
                     <% }); %>
                 </tbody>
             </table>
+
             <div class="btn-group">
-                <a href="/checkoutAll" class="btn3 btn-danger">Checkout All</a>
+                <a href="/checkoutAll" class="btn3">Checkout All</a>
             </div>
 
             <div class="total-amount">
@@ -161,6 +218,6 @@
             </div>
         <% } %>
 
-        <a href="/showall" class="btn2 btn-primary">Continue Shopping</a>
+        <a href="/showall" class="btn2">Continue Shopping</a>
     </div>
 </body>
