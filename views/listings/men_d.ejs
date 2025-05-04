@@ -46,7 +46,7 @@
 
                 <% }}  if (curruser) { %>
                     <!-- Logged-in User View -->
-                     <% if(!curruser.username === "admin@123"){ %>
+                     <% if(curruser.username !== "admin@123"){ %>
                     <h4>Select Size (UK)</h4>
                     <div class="btn-group d-flex flex-wrap" role="group">
                         <% [6,7,8,9,10].forEach(size => { %>

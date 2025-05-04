@@ -9,6 +9,7 @@ const Men = require("./model/men.js");
 const Women = require("./model/women.js");
 const Collections = require("./model/collections.js");
 const Kids = require("./model/kids.js");
+const customer = require("./model/customer.js");
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
@@ -94,8 +95,8 @@ const storage = multer.diskStorage({
 // Connect to MongoDB database
 async function main() {
   try {
-    // await mongoose.connect("mongodb://127.0.0.1:27017/shoes_palace");
-    await mongoose.connect("mongodb+srv://omkale0107:KpQXxecPPRt7WAin@cluster0.9e6ps.mongodb.net/shoes_palace?retryWrites=true&w=majority")
+    await mongoose.connect("mongodb://127.0.0.1:27017/shoes_palace");
+    // await mongoose.connect("mongodb+srv://omkale0107:KpQXxecPPRt7WAin@cluster0.9e6ps.mongodb.net/shoes_palace?retryWrites=true&w=majority")
     console.log("Connected To Database...");
   } catch (err) {
     console.log("Connection error", err);
@@ -127,7 +128,7 @@ app.post("/signup", async (req, res) => {
 
     // Register the new user with a password
     const registeredUser = await user.register(newUser, password);
-    console.log(registeredUser);
+    // console.log(registeredUser);
 
     req.login(registeredUser, (err) => {
       if (err) return next(err);
@@ -611,6 +612,47 @@ app.delete("/listings/:id/del", async (req, res) => {
 
 
 //admin pannel for sale
+
+
+// Process Checkout Route
+app.post("/pro-not-avai", async (req, res) => {
+  try {
+    console.log("Hello Javascrit")
+    const { name, phone, email, address, city, state, zipcode, paymentMethod } =
+      req.body;
+
+    const currentDateTime = new Date();
+    const newCheckout = new customer({
+      currentDateTime,
+      user: {
+        _id: req.user._id,
+        email: req.user.email,
+        username: req.user.username,
+      },
+      billing: { name, phone, email, address, city, state, zipcode },
+      payment: { method: paymentMethod },
+    });
+
+    await newCheckout.save();
+
+    req.flash("success", "Checkout successful!");
+    res.redirect("/pro-not-avai");
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Error processing checkout. Please try again.");
+    res.redirect("/");
+  }
+});
+
+app.get("/pro-not-avai", async (req, res) => {
+  const thenewcustomer = await customer.find({});
+  res.render("order_sucess.ejs", {
+    thenewcustomer,
+  });
+});
+
+
+
 
 // Route to render the form for editing a listing
 app.get("/listings/:id/edit2", async (req, res) => {

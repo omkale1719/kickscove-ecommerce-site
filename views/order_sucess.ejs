@@ -49,6 +49,42 @@
     
 </style>
 <body>
+
+    <br><br><br>
+    <% if(curruser.username==Admin){ %>
+        
+        <h2 style="color:blue">Customer Order Details</h2>
+   <div class="container">
+      <% thenewcustomer.forEach(function (order) { %>
+        <div class="mydiv">
+            
+            <% if (order.user) { %>
+              <h5 class="delivery_address" style="color:red">User Information</h5>
+              <p class="curr_username"><strong>Username:</strong> <%= order.user.username %></p>
+              <p class="curr_email"><strong>Email:</strong> <%= order.user.email %></p>
+            <% } else { %>
+              <p class="curr_username"><strong>Username:</strong> Not Logged In</p>
+              <p class="curr_email"><strong>Email:</strong> Not Available</p>
+            <% } %>
+        <h5 class="delivery_address">Address of delivery</h5>
+          <p class="customer-name"><strong>Name:</strong> <%= order.billing.name %></p>
+          <p class="customer-name"><strong>Phone:</strong> <%= order.billing.phone %></p>
+          <p class="customer-email"><strong>Email:</strong> <%= order.billing.email %></p>
+          <p><strong>Order Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+          <p><strong>Order Time:</strong> <%= new Date(order.createdAt).toLocaleTimeString() %></p>
+          <p class="customer-address"><strong>Address:</strong> <%= order.billing.address %>, <%= order.billing.city %>, <%= order.billing.state %> - <%= order.billing.zipcode %></p>
+          <p class="customer-payment-method"><strong>Payment Method:</strong> <%= order.payment.method %></p>
+         <hr><hr><hr>
+        </div>
+   
+      <% }) %>
+    </div>
+    <% } %>
+   
+
+
+    <% if(curruser.username!==Admin){ %>
+
     <div class="allbody">
     <div class="container1">
         <div class="success-logo1">
@@ -58,8 +94,11 @@
         <p>Your order has been placed successfully!</p>
         <p>Thank you for shopping with us!</p>
         
-        <a href="http://localhost:3000/showall" class="btn1">Go Back to Home</a>
+        <a href="/" class="btn1">Go Back to Home</a>
     </div>
     </div>
+
+<% } %>
+
 </body>
 
