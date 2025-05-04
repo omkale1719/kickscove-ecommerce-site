@@ -1,0 +1,57 @@
+<% layout('./layouts/boilerplate') %>
+<link href="/css/new_listing.css" rel="stylesheet">
+
+<body>
+    <div class="formdiv"> <!-- col-12 for mobile, col-md-8 for larger screens -->
+        <h2>Create Listing</h2>
+        <br><br>
+        <form action="/listings/new" method="POST" enctype="multipart/form-data" id="listingForm">
+            <div>
+                <label for="title" class="form-label">Title</label>
+                <input type="text" name="listing[title]" id="title" class="form-control" required>
+            </div>
+            <br>
+           
+           
+            <div>
+                <label for="description" class="form-label">Description</label>
+                <textarea name="listing[description]" id="description" class="form-control" rows="4" required></textarea>
+            </div>
+            <br>
+            <div>
+                <label for="price" class="form-label">New Price</label>
+                <input type="number" name="listing[price]" id="price" class="form-control" required>
+            </div>
+            <br>
+            <div>
+                <label for="Rprice" class="form-label">Old Price</label>
+                <input type="number" name="listing[Rprice]" id="Rprice" class="form-control" required>
+            </div>
+            <br>
+            <div>
+                <label for="category" class="form-label">Category</label>
+                <select name="listing[category]" id="category" class="form-control" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <option value="Listing">Bestseller</option>
+                    <option value="Sale">Sale</option>
+                    <option value="New_A">New Arrivals</option>
+                    <option value="Men">Men's</option>
+                    <option value="Women">Women's</option>
+                    <option value="Kids">Kids</option>
+                    <option value="Collections">Collections</option>
+                    
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="image" class="form-label">Image</label>
+                <input type="file" name="listing[image]" id="image" class="form-control" accept="image/*" required>
+                <small>Recommended size: 300x460 pixels</small>
+            </div>
+            <br>
+            <button type="submit" class="create_listing">Create Listing</button>
+        </form>
+    </div>
+
+   
+</body>

@@ -12,6 +12,15 @@
                 <div class="col">
                     <div class="card h-100 position-relative">
                         <!-- Wishlist Button -->
+                        <div class="wishlist-button position-absolute" style="top: 10px; right: 10px;">
+                            <form id="add-to-wishlist-form" action="/add-to-wishlist" method="POST">
+                                <input type="hidden" name="productId" value="<%= Listing._id %>">
+                                <input type="hidden" name="model" value="Listing">
+                                <button type="submit" class="heartBtn" style="border: none; background: none;">
+                                    <i class="fa-regular fa-heart heartIcon"></i>
+                                </button>
+                            </form>
+                        </div>
                         <!-- (your wishlist code stays unchanged) -->
             
                         <a href="/showdetail/<%= Listing._id %>" class="stretched-link text-decoration-none">

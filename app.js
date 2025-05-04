@@ -18,6 +18,11 @@ const localstrategy = require("passport-local");
 const user = require("./model/user.js");
 const { saveRedirectUrl } = require("./middleware.js");
 const flash = require("express-flash");
+const multer = require("multer");
+const fs = require("fs");
+const methodOverride = require("method-override");
+
+
 
 
 // Setting up EJS as the view engine and configuring view file paths
@@ -30,6 +35,7 @@ app.engine("ejs", ejsMate);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(flash());
+app.use(methodOverride("_method"));
 
 // Session management setup to handle user sessions, cookies, etc.
 app.use(session({
@@ -38,6 +44,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false }  
 }));
+
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -48,6 +55,7 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.curruser = req.user || null;
+  res.locals.Admin = "admin@123" || null;
   next();
 });
 
@@ -72,12 +80,23 @@ passport.deserializeUser((id, done) => {
 
 
 
+// Multer Configuration
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "/uploads"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+
 // Connect to MongoDB database
 async function main() {
   try {
-    // await mongoose.connect("mongodb://127.0.0.1:27017/shoes_palace");
-    await mongoose.connect("mongodb+srv://omkale0107:KpQXxecPPRt7WAin@cluster0.9e6ps.mongodb.net/shoes_palace?retryWrites=true&w=majority")
-    console.log("Connection successful");
+    await mongoose.connect("mongodb://127.0.0.1:27017/shoes_palace");
+    // await mongoose.connect("mongodb+srv://omkale0107:KpQXxecPPRt7WAin@cluster0.9e6ps.mongodb.net/shoes_palace?retryWrites=true&w=majority")
+    console.log("Connected To Database...");
   } catch (err) {
     console.log("Connection error", err);
   }
@@ -159,7 +178,7 @@ app.post(
 // Logout Route
 app.get("/logout", (req, res) => {
   req.logout((err) => {
-    req.session.destroy(() => res.redirect("/showall"));
+    req.session.destroy(() => res.redirect("/"));
   });
 });
 
@@ -465,6 +484,554 @@ app.get("/added_to_cart",(req,res)=>{
   const cartCount=req.session.cartCount || 0;
   res.json({cartCount});
 })
+
+
+
+
+
+// Admin Panel Routes
+
+// Route to render the form for adding a new listing
+app.get("/listings/new", (req, res) => {
+  res.render("Admin/new_listing.ejs", {
+   
+  });
+});
+
+// Route to handle new listing creation with file upload
+const upload = multer({ storage });
+app.post("/listings/new", upload.single("listing[image]"), async (req, res) => {
+  console.log(req.body.listing);
+  const { title, description, price, Rprice, category } = req.body.listing;
+  const Model = models[category];
+
+  if (!Model) {
+    return res.status(400).send("Invalid category");
+  }
+
+  try {
+    const newListing = new Model({
+      title,
+      description,
+      price,
+      Rprice,
+      image: req.file ? "/uploads/" + req.file.filename : null, // Save the uploaded image path
+    });
+    console.log(req.file);
+
+    await newListing.save();
+    req.flash("success", "New Listing Is Creted!");
+    res.redirect("/");
+  } catch (error) {
+    res.status(500).send("Failed to create listing: " + error.message);
+  }
+});
+
+// Route to render the form for editing a listing
+app.get("/listings/:id/edit", async (req, res) => {
+  const { id } = req.params;
+
+
+  try {
+    const listing = await Men.findById(id);
+    if (!listing) {
+      return res.status(404).send("Listing not found");
+    }
+
+    res.render("Admin/edit_listing.ejs", {
+      listing,
+    });
+  } catch (error) {
+    res.status(500).send("Failed to load edit form: " + error.message);
+  }
+});
+
+app.post(
+  "/listings/:id/",
+  upload.single("listing[image]"),
+  async (req, res) => {
+    const { id } = req.params;
+    const { title, description, price,Rprice } = req.body.listing;
+   
+
+    try {
+      const updatedData = {
+        title,
+        description,
+        price,
+        Rprice
+      };
+
+      // Add new image if uploaded
+      if (req.file) {
+        updatedData.image = "/uploads/" + req.file.filename;
+      }
+
+      // Update the database
+      const updatedListing = await Men.findByIdAndUpdate(id, updatedData, {
+        new: true,
+      });
+      if (!updatedListing) {
+        return res.status(404).send("Listing not found");
+      }
+      req.flash("success", "Successfully Reacord Updated!");
+      res.redirect(`/`);
+    } catch (error) {
+      res.status(500).send("Failed to update listing: " + error.message);
+    }
+  }
+);
+
+// Route to handle deleting a listing
+app.delete("/listings/:id/del", async (req, res) => {
+  const { id } = req.params;
+ console.log(id)
+
+  try {
+    const deletedListing = await Men.findByIdAndDelete(id);
+
+    if (!deletedListing) {
+      return res.status(404).send("Listing not found");
+    }
+
+    // const imagePath = path.join(__dirname, deletedListing.image);
+    // if (fs.existsSync(imagePath)) {
+    //   fs.unlinkSync(imagePath);
+    // }
+    req.flash("success", "Reacord is deleted!");
+    res.redirect("/");
+  } catch (error) {
+    res.status(500).send("Failed to delete listing: " + error.message);
+  }
+});
+
+
+
+
+
+
+//admin pannel for sale
+
+// Route to render the form for editing a listing
+app.get("/listings/:id/edit2", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await Sale.findById(id);
+    if (!listing) {
+      return res.status(404).send("Listing not found");
+    }
+    res.render("Admin/edit2.ejs", {
+      listing,
+    });
+  } catch (error) {
+    res.status(500).send("Failed to load edit form: " + error.message);
+  }
+});
+
+app.post(
+  "/listings/:id/2",
+  upload.single("listing[image]"),
+  async (req, res) => {
+    const { id } = req.params;
+    const { title, description, price,Rprice } = req.body.listing;
+    try {
+      const updatedData = {
+        title,
+        description,
+        price,
+        Rprice
+      };
+
+      // Add new image if uploaded
+      if (req.file) {
+        updatedData.image = "/uploads/" + req.file.filename;
+      }
+      // Update the database
+      const updatedListing = await Sale.findByIdAndUpdate(id, updatedData, {
+        new: true,
+      });
+      if (!updatedListing) {
+        return res.status(404).send("Listing not found");
+      }
+      req.flash("success", "Successfully Reacord Updated!");
+      res.redirect(`/`);
+    } catch (error) {
+      res.status(500).send("Failed to update listing: " + error.message);
+    }
+  }
+);
+
+// Route to handle deleting a listing
+app.delete("/listings/:id/del2", async (req, res) => {
+  const { id } = req.params;
+ console.log(id)
+  try {
+    const deletedListing = await Sale.findByIdAndDelete(id);
+    if (!deletedListing) {
+      return res.status(404).send("Listing not found");
+    }
+    req.flash("success", "Reacord is deleted!");
+    res.redirect("/");
+  } catch (error) {
+    res.status(500).send("Failed to delete listing: " + error.message);
+  }
+});
+
+
+
+//admin pannel for kids
+
+// Route to render the form for editing a listing
+app.get("/listings/:id/edit3", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await Kids.findById(id);
+    if (!listing) {
+      return res.status(404).send("Listing not found");
+    }
+    res.render("Admin/edit3.ejs", {
+      listing,
+    });
+  } catch (error) {
+    res.status(500).send("Failed to load edit form: " + error.message);
+  }
+});
+
+app.post(
+  "/listings/:id/3",
+  upload.single("listing[image]"),
+  async (req, res) => {
+    const { id } = req.params;
+    const { title, description, price,Rprice } = req.body.listing;
+    try {
+      const updatedData = {
+        title,
+        description,
+        price,
+        Rprice
+      };
+
+      // Add new image if uploaded
+      if (req.file) {
+        updatedData.image = "/uploads/" + req.file.filename;
+      }
+      // Update the database
+      const updatedListing = await Kids.findByIdAndUpdate(id, updatedData, {
+        new: true,
+      });
+      if (!updatedListing) {
+        return res.status(404).send("Listing not found");
+      }
+      req.flash("success", "Successfully Reacord Updated!");
+      res.redirect(`/`);
+    } catch (error) {
+      res.status(500).send("Failed to update listing: " + error.message);
+    }
+  }
+);
+
+// Route to handle deleting a listing
+app.delete("/listings/:id/del3", async (req, res) => {
+  const { id } = req.params;
+ console.log(id)
+  try {
+    const deletedListing = await Kids.findByIdAndDelete(id);
+    if (!deletedListing) {
+      return res.status(404).send("Listing not found");
+    }
+    req.flash("success", "Reacord is deleted!");
+    res.redirect("/");
+  } catch (error) {
+    res.status(500).send("Failed to delete listing: " + error.message);
+  }
+});
+
+
+
+
+
+//admin pannel for Women
+
+// Route to render the form for editing a listing
+app.get("/listings/:id/edit4", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await Women.findById(id);
+    if (!listing) {
+      return res.status(404).send("Listing not found");
+    }
+    res.render("Admin/edit4.ejs", {
+      listing,
+    });
+  } catch (error) {
+    res.status(500).send("Failed to load edit form: " + error.message);
+  }
+});
+
+app.post(
+  "/listings/:id/4",
+  upload.single("listing[image]"),
+  async (req, res) => {
+    const { id } = req.params;
+    const { title, description, price,Rprice } = req.body.listing;
+    try {
+      const updatedData = {
+        title,
+        description,
+        price,
+        Rprice
+      };
+
+      // Add new image if uploaded
+      if (req.file) {
+        updatedData.image = "/uploads/" + req.file.filename;
+      }
+      // Update the database
+      const updatedListing = await Women.findByIdAndUpdate(id, updatedData, {
+        new: true,
+      });
+      if (!updatedListing) {
+        return res.status(404).send("Listing not found");
+      }
+      req.flash("success", "Successfully Reacord Updated!");
+      res.redirect(`/`);
+    } catch (error) {
+      res.status(500).send("Failed to update listing: " + error.message);
+    }
+  }
+);
+
+// Route to handle deleting a listing
+app.delete("/listings/:id/del4", async (req, res) => {
+  const { id } = req.params;
+ console.log(id)
+  try {
+    const deletedListing = await Women.findByIdAndDelete(id);
+    if (!deletedListing) {
+      return res.status(404).send("Listing not found");
+    }
+    req.flash("success", "Reacord is deleted!");
+    res.redirect("/");
+  } catch (error) {
+    res.status(500).send("Failed to delete listing: " + error.message);
+  }
+});
+
+
+
+
+
+//admin pannel for New_A
+
+// Route to render the form for editing a listing
+app.get("/listings/:id/edit5", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await New_A.findById(id);
+    if (!listing) {
+      return res.status(404).send("Listing not found");
+    }
+    res.render("Admin/edit5.ejs", {
+      listing,
+    });
+  } catch (error) {
+    res.status(500).send("Failed to load edit form: " + error.message);
+  }
+});
+
+app.post(
+  "/listings/:id/5",
+  upload.single("listing[image]"),
+  async (req, res) => {
+    const { id } = req.params;
+    const { title, description, price,Rprice } = req.body.listing;
+    try {
+      const updatedData = {
+        title,
+        description,
+        price,
+        Rprice
+      };
+
+      // Add new image if uploaded
+      if (req.file) {
+        updatedData.image = "/uploads/" + req.file.filename;
+      }
+      // Update the database
+      const updatedListing = await New_A.findByIdAndUpdate(id, updatedData, {
+        new: true,
+      });
+      if (!updatedListing) {
+        return res.status(404).send("Listing not found");
+      }
+      req.flash("success", "Successfully Reacord Updated!");
+      res.redirect(`/`);
+    } catch (error) {
+      res.status(500).send("Failed to update listing: " + error.message);
+    }
+  }
+);
+
+// Route to handle deleting a listing
+app.delete("/listings/:id/del5", async (req, res) => {
+  const { id } = req.params;
+ console.log(id)
+  try {
+    const deletedListing = await New_A.findByIdAndDelete(id);
+    if (!deletedListing) {
+      return res.status(404).send("Listing not found");
+    }
+    req.flash("success", "Reacord is deleted!");
+    res.redirect("/");
+  } catch (error) {
+    res.status(500).send("Failed to delete listing: " + error.message);
+  }
+});
+
+
+
+
+
+//admin pannel for Listing
+
+// Route to render the form for editing a listing
+app.get("/listings/:id/edit6", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await Listing.findById(id);
+    if (!listing) {
+      return res.status(404).send("Listing not found");
+    }
+    res.render("Admin/edit6.ejs", {
+      listing,
+    });
+  } catch (error) {
+    res.status(500).send("Failed to load edit form: " + error.message);
+  }
+});
+
+app.post(
+  "/listings/:id/6",
+  upload.single("listing[image]"),
+  async (req, res) => {
+    const { id } = req.params;
+    const { title, description, price,Rprice } = req.body.listing;
+    try {
+      const updatedData = {
+        title,
+        description,
+        price,
+        Rprice
+      };
+
+      // Add new image if uploaded
+      if (req.file) {
+        updatedData.image = "/uploads/" + req.file.filename;
+      }
+      // Update the database
+      const updatedListing = await Listing.findByIdAndUpdate(id, updatedData, {
+        new: true,
+      });
+      if (!updatedListing) {
+        return res.status(404).send("Listing not found");
+      }
+      req.flash("success", "Successfully Reacord Updated!");
+      res.redirect(`/`);
+    } catch (error) {
+      res.status(500).send("Failed to update listing: " + error.message);
+    }
+  }
+);
+
+// Route to handle deleting a listing
+app.delete("/listings/:id/del6", async (req, res) => {
+  const { id } = req.params;
+ console.log(id)
+  try {
+    const deletedListing = await Listing.findByIdAndDelete(id);
+    if (!deletedListing) {
+      return res.status(404).send("Listing not found");
+    }
+    req.flash("success", "Reacord is deleted!");
+    res.redirect("/");
+  } catch (error) {
+    res.status(500).send("Failed to delete listing: " + error.message);
+  }
+});
+
+
+
+
+
+//admin pannel for Collection
+
+// Route to render the form for editing a listing
+app.get("/listings/:id/edit7", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await Collections.findById(id);
+    if (!listing) {
+      return res.status(404).send("Listing not found");
+    }
+    res.render("Admin/edit7.ejs", {
+      listing,
+    });
+  } catch (error) {
+    res.status(500).send("Failed to load edit form: " + error.message);
+  }
+});
+
+app.post(
+  "/listings/:id/7",
+  upload.single("listing[image]"),
+  async (req, res) => {
+    const { id } = req.params;
+    const { title, description, price,Rprice } = req.body.listing;
+    try {
+      const updatedData = {
+        title,
+        description,
+        price,
+        Rprice
+      };
+
+      // Add new image if uploaded
+      if (req.file) {
+        updatedData.image = "/uploads/" + req.file.filename;
+      }
+      // Update the database
+      const updatedListing = await Collections.findByIdAndUpdate(id, updatedData, {
+        new: true,
+      });
+      if (!updatedListing) {
+        return res.status(404).send("Listing not found");
+      }
+      req.flash("success", "Successfully Reacord Updated!");
+      res.redirect(`/`);
+    } catch (error) {
+      res.status(500).send("Failed to update listing: " + error.message);
+    }
+  }
+);
+
+// Route to handle deleting a listing
+app.delete("/listings/:id/del7", async (req, res) => {
+  const { id } = req.params;
+ console.log(id)
+  try {
+    const deletedListing = await Collections.findByIdAndDelete(id);
+    if (!deletedListing) {
+      return res.status(404).send("Listing not found");
+    }
+    req.flash("success", "Reacord is deleted!");
+    res.redirect("/");
+  } catch (error) {
+    res.status(500).send("Failed to delete listing: " + error.message);
+  }
+});
+
+
+
 
 
 // Start server on port 3000

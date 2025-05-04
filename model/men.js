@@ -16,12 +16,12 @@ const listingschema=new Schema({
     },
     price:{
         type:Number,
-        required:true,
+        // required:true,
         min:[0,"price cannot be zero"],
     },
     Rprice:{
         type:Number,
-        required:true,
+        // required:true,
         min:[0,"price cannot be zero"],
     },
     image:
@@ -33,6 +33,7 @@ const listingschema=new Schema({
             
      },
     },
+    
 })
 
 const men=mongoose.model("men",listingschema);

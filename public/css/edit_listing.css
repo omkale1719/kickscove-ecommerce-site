@@ -1,0 +1,126 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body and overall font styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+/* Main container styling */
+.col-8.offset-2 {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Title styling */
+h3 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Form label styling */
+label.form-label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: block;
+    color: #555;
+}
+
+/* Input and textarea fields styling */
+input.form-control,
+textarea.form-control,
+select.form-control {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+/* Focus effect on inputs */
+input.form-control:focus,
+textarea.form-control:focus,
+select.form-control:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Textarea specific styling */
+textarea.form-control {
+    resize: vertical;
+}
+
+/* Image preview styling */
+img {
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+/* Button styling */
+.update_form {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.update_form:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive media queries */
+@media (max-width: 768px) {
+    .col-8.offset-2 {
+        padding: 15px;
+    }
+
+    input.form-control,
+    textarea.form-control,
+    select.form-control {
+        font-size: 14px;
+    }
+
+    .update_form {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    h3 {
+        font-size: 22px;
+    }
+
+    label.form-label {
+        font-size: 14px;
+    }
+
+    input.form-control,
+    textarea.form-control,
+    select.form-control {
+        font-size: 13px;
+    }
+
+    .update_form {
+        font-size: 13px;
+    }
+}

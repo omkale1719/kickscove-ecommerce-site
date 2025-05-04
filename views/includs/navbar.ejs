@@ -47,7 +47,10 @@
           <li class="nav-item">
             <a class="nav-link user-style" href="/login" style="font-size: 18px;"><i class="fa-solid fa-user"></i></a>
           </li>
+          
+
           <% }if(curruser) {%>
+           <% if(!curruser.username="admin@123"){ %>
           <li class="nav-item">
             <a class="nav-link position-relative" href="/wishlist">
               <i class="fa-regular fa-heart">
@@ -64,10 +67,14 @@
           <li class="nav-item">
             <a class="nav-link" href="/track_orders"><i class="fas fa-truck"></i> Track Order</a>
           </li>
+         
           <li class="nav-item">
             <a class="nav-link" href="/logout" style="font-size: 18px;">LogOut</a>
           </li>
-          <% } %>
+          <% } }%>
+
+          
+
         </ul>
       </div>
     </div>

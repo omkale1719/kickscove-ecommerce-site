@@ -1,0 +1,42 @@
+<% layout('./layouts/boilerplate') %>
+<link href="/css/edit_listing.css" rel="stylesheet">
+
+<body>
+    <div class="Row"></div>
+    <div class="col-8 offset-2">
+        <h3>Edit Listing</h3>
+        <br><br>
+        <form action="/listings/<%= listing._id %>/5" method="POST" enctype="multipart/form-data">
+            <div>
+                <label for="title" class="form-label">Title</label>
+                <input type="text" name="listing[title]" id="title" class="form-control" value="<%= listing.title %>" required>
+            </div>
+            <br>
+            
+            <div>
+                <label for="description" class="form-label">Description</label>
+                <textarea name="listing[description]" id="description" class="form-control" rows="4" required><%= listing.description %></textarea>
+            </div>
+            <br>
+            <div>
+                <label for="price" class="form-label">Price</label>
+                <input type="number" name="listing[price]" id="price" class="form-control" value="<%= listing.price %>" required>
+            </div>
+            <br>
+            <div>
+                <label for="Rprice" class="form-label">Old Price</label>
+                <input type="number" name="listing[Rprice]" id="Rprice" class="form-control" value="<%= listing.Rprice %>" required>
+            </div>
+            <br>
+            <div>
+                <label for="image" class="form-label">Image</label>
+                <input type="file" name="listing[image]" id="image" class="form-control" accept="image/*">
+                <br>
+                <img src="<%= listing.image %>" alt="Current Image" width="100">
+            </div>
+            <br>
+            <button type="submit" class="update_form">Update Listing</button>
+        </form>
+    </div>
+    </div>
+</body>
